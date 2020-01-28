@@ -1,0 +1,118 @@
+using System;
+
+namespace Treap
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Hello World!");
+
+            string[] inputs = Console.ReadLine().Split(' ');
+            int noOfItems = Convert.ToInt32(inputs[0]);
+            int noOfQuestions = Convert.ToInt32(inputs[1]);
+
+            int[] inputArray = Array.ConvertAll(Console.ReadLine().Split(' '), arr => Convert.ToInt32(arr));
+            Treap obj = new Treap();
+            for (int i = 0; i <= inputArray.Length -1; i++)
+            {
+                obj.Insert(i, inputArray[i]);
+            }
+            obj.PrintElement();
+
+            Console.ReadKey();
+
+        }
+    }
+
+    public class Node
+    {
+        public static readonly Random random = new Random();
+
+        public int Key { get; set; }
+
+        public int Value { get; set; }
+
+        public int Priority { get; set; }
+
+        public int Size { get; set; }
+
+        public Node LeftNode { get; set; }
+
+        public Node RightNode { get; set; }
+
+        public Node(int key,int value) : this(key,value,random.Next(),null,null)
+        {
+           
+        }
+
+        public Node(int key, int value,int priority,Node left,Node right)
+        {
+            Key = key;
+
+            Value = value;
+
+            Priority =priority;
+
+            LeftNode = left;
+
+            RightNode = right;
+        }
+
+        public void InorderPrint(Node node)
+        {
+            if (node == null)
+                return;
+
+            InorderPrint(node.LeftNode);
+            Console.Write(node.Value);
+            Console.Write(" ");
+            InorderPrint(node.RightNode);
+
+        }
+
+    }
+
+
+    public class Treap
+    {
+        Node root;
+
+        public void PrintElement()
+        {
+            root.InorderPrint(root);
+        }
+        public void Insert(int key,int value)
+        {
+            if(root == null)
+            {
+                root = new Node(key, value);
+                return;
+            }
+            else
+            {
+                root = Merge(root, new Node(key, value));
+            }
+        }
+
+        public Node Merge(Node left,Node right)
+        {
+            if (left == null)
+                return right;
+
+            else if (right == null)
+                return left;
+
+            if(left.Priority > right.Priority)
+            {
+                Node newRight = Merge(left.RightNode, right);
+                return new Node(left.Key, left.Value, left.Priority, left.LeftNode, newRight);
+            }
+            else
+            {
+                Node newleft = Merge(left, right.LeftNode);
+                return new Node(right.Key, right.Value, right.Priority, newleft, right.RightNode);
+            }
+        }
+    }
+}
